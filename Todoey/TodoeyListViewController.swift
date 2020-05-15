@@ -10,15 +10,17 @@ import UIKit
 
 class TodoeyListViewController: UITableViewController {
     var list = ["Drinking cofee with friends", "Playing Bubg", "Back to Angela", "Watching Othman"]
+    let defaults = UserDefaults.standard
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        list = defaults.array(forKey: K.itmeListDefultsKey) as! [String]
     }
     @IBAction func additemBtn(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         let addAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
             self.list.append(textField.text!)
+            self.defaults.set(self.list, forKey: K.itmeListDefultsKey)
             self.tableView.reloadData()
         }
         alert.addAction(addAction)
@@ -30,6 +32,7 @@ class TodoeyListViewController: UITableViewController {
         }
         present(alert, animated: true, completion: nil)
     }
+    
     // MARK:- TableView DataSource Methods
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
