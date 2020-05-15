@@ -9,10 +9,26 @@
 import UIKit
 
 class TodoeyListViewController: UITableViewController {
-    let list = ["Drinking cofee with friends", "Playing Bubg", "Back to Angela", "Watching Othman"]
+    var list = ["Drinking cofee with friends", "Playing Bubg", "Back to Angela", "Watching Othman"]
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+    }
+    @IBAction func additemBtn(_ sender: UIBarButtonItem) {
+        var textField = UITextField()
+        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        let addAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            self.list.append(textField.text!)
+            self.tableView.reloadData()
+        }
+        alert.addAction(addAction)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancelAction)
+        alert.addTextField { (alertTextField) in
+            textField.placeholder = "Create New Item"
+            textField = alertTextField
+        }
+        present(alert, animated: true, completion: nil)
     }
     // MARK:- TableView DataSource Methods
 
