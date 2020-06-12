@@ -7,20 +7,28 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoeyListViewController: UITableViewController {
     var list = [Item]()
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(K.itmePListKey)
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var selectedCategory: Category?  {
+        didSet {
+            retrieveData()
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        retrieveData()
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     }
     @IBAction func additemBtn(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         let addAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            let newItem = Item()
+            let newItem = Item(context: self.context)
             newItem.title = textField.text!
+            newItem.done = false
+            newItem.parentCategory = self.selectedCategory
             self.list.append(newItem)
             self.saveData()
         }
@@ -43,7 +51,6 @@ class TodoeyListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellID, for: indexPath)
         let item = list[indexPath.row]
         cell.textLabel?.text = item.title
-        
         cell.accessoryType = item.done ? .checkmark : .none
         
         return cell
@@ -52,32 +59,55 @@ class TodoeyListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
         list[indexPath.row].done = !list[indexPath.row].done
         saveData()
     }
-
-
+    
+    // MARK:- CoreData methods
+    
     func saveData() {
-             let encoder = PropertyListEncoder()
-               do {
-                   let data = try encoder.encode(list)
-                   try data.write(to: dataFilePath!)
-               }catch {
-                   print("Error encoding list \(error)")
-               }
-               tableView.reloadData()
+        do {
+            try context.save()
+        }catch {
+            print("Error saving context \(error)")
+        }
+        tableView.reloadData()
     }
-    func retrieveData() {
-        if let data =  try? Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                list = try decoder.decode([Item].self, from: data)
-            } catch {
-                print("Error Decoding items \(error)")
+    
+    func retrieveData(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
+        let categoryPrediacte = NSPredicate(format: "parentCategory.name MATCHES[cd] %@", selectedCategory!.name!)
+        if let additionalpredicate = predicate {
+             request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPrediacte,additionalpredicate])
+        } else {
+            request.predicate = categoryPrediacte
+        }
+        do {
+            list = try context.fetch(request)
+        } catch {
+            print("Error Fetching Data from persistent container \(error)")
+        }
+        tableView.reloadData()
+    }
+}
+// MARK:- Serach Bar Delegate Methods
+extension TodoeyListViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if searchBar.text?.count != 0 {
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
             }
         }
     }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.count == 0 {
+            retrieveData()
+        } else {
+            let request : NSFetchRequest<Item> = Item.fetchRequest()
+            let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchText)
+            request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+            retrieveData(with: request, predicate: predicate)
+        }
+    }
 }
-
 
