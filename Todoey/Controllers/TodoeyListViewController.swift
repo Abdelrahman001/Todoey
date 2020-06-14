@@ -91,7 +91,12 @@ class TodoeyListViewController: UITableViewController {
 }
 // MARK:- Serach Bar Delegate Methods
 extension TodoeyListViewController: UISearchBarDelegate {
-    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+      
+    }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if searchBar.text?.count != 0 {
             DispatchQueue.main.async {

@@ -14,7 +14,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Search Your TO-DOs" id="6dQ-2Y-rUb">
+                        <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Search Your TO-DOs" showsCancelButton="YES" id="6dQ-2Y-rUb">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <textInputTraits key="textInputTraits"/>
