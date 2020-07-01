@@ -133,7 +133,6 @@ extension TodoeyListViewController: UISearchBarDelegate {
         if searchBar.text?.count != 0 {
             todoeyItems = todoeyItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
                        tableView.reloadData()
-            print("searchBar is not empty")
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
                 
