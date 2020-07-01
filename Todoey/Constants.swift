@@ -9,8 +9,6 @@
 import Foundation
 
 struct K {
-    static let cellID = "TodoItemCell"
-    static let itmePListKey = "Items.plist"
-    static let categoryCell = "CategoryCell"
+    static let cellID = "cell"
     static let toItemsSegue = "goToItems"
 }
