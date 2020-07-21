@@ -135,7 +135,6 @@ extension TodoeyListViewController: UISearchBarDelegate {
                        tableView.reloadData()
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
-                
             }
         } else {
             retrieveData()
